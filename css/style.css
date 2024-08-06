@@ -66,12 +66,11 @@ h1 {
 }
 
 
-.formatation ul {
+ .ul1 {
   display: block ruby;
   padding-top: 5vw;
 
-}
-
+} 
 
 .Desconhecido {
   background-color: #a3a3a3;
@@ -116,7 +115,7 @@ h1 {
   border-radius: 0.8rem;
 }
 
-.dead2 {
+/* .dead2 {
   background-color: #df302a;
   color: white;
   padding: 0.3vw 2vw;
@@ -142,7 +141,7 @@ h1 {
   left: 12.4vw;
   font-size: 1.5vw;
   border-radius: 0.8rem;
-}
+} */
 
 
 
@@ -161,7 +160,7 @@ h1 {
 
 }
 
-ul {
+/* ul {
   display: flex;
   flex-wrap: wrap;
   list-style-type: none;
@@ -170,14 +169,12 @@ ul {
 
 ul>li {
   flex: 1 1 calc(25% - 40px);
-  /* 4 items per row with 20px margin */
   margin: 10px;
-}
+} */
 
 .container {
   position: relative;
   width: 19.5vw;
-  /* Define a largura como 80% da largura da janela do navegador */
   height: 27vw;
   overflow: hidden;
 
@@ -199,7 +196,7 @@ ul>li {
   height: auto;
 }
 
-.image_1 {
+/* .image_1 {
   display: block;
   width: 211%;
   height: auto;
@@ -351,12 +348,11 @@ ul>li {
   left: -1%;
   position: absolute;
   top: 0%;
-}
+} */
 
 .overlay {
   position: absolute;
   cursor: pointer;
-  /* Adiciona o cursor de clique */
 
   bottom: 100%;
   left: 0;

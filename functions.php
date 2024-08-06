@@ -1,128 +1,86 @@
 <?php
-include_once 'classes/personagem.class.php';
-function insertDB(Personagem $personagem)
-{
-    $nome = $personagem->getNome();
-    $aparicao = $personagem->getPrimeiraAparicao();
-    $maiorFeito = $personagem->getMaiorFeito();
-    $descricao = $personagem->getDescricao();
-    $estadoVM = $personagem->getEstadoVM();
-    $causaDaMorte = $personagem->getCausaDaMorte();
-    $imagem = $personagem->getImagem();
+include_once 'classes/personagem.php';
+include_once 'classes/personagemCrud.php';
+include_once 'classes/Conexao.php';
 
-    $sql = "INSERT INTO cadastroPersonagem (name, apparition, greatFeat, description, alive, causeOfDead, image)
-                VALUES ('$nome', '$aparicao', '$maiorFeito', '$descricao', '$estadoVM', '$causaDaMorte', '$imagem')";
+// function organizaCards()
+// {
+//     $counter = 0;
+//     $personagemCrud = new PersonagemCrud();
+//     $todosPersonagens = $personagemCrud->read();
 
-    if (connect($sql) == true) {
-        echo "Cadastro $nome efetuado com sucesso!";
-    }else {
-        echo "Tentativa de cadastro deu erro.";
-    }
-}
+//     echo '<ul class="ul1">';
+//     foreach ($todosPersonagens as $key => $personagem) {
 
-function organizaCards()
-{
-    $minId = selectMaxMin('min');
-    $maxId = selectMaxMin('max');
+//         if ($counter > 0 && $counter % 4 == 0) {
+//             echo '</ul><ul class="ul1">';
+//         }
 
-    $counter = 0;
+//         estruturaCard($personagem);
 
-    echo '<ul>';
-    for ($id = $minId; $id <= $maxId; $id++) {
+//         $counter++;
+//     }
 
-        $confereQuery = "SELECT id FROM db_SystemCharacters.cadastroPersonagem WHERE id = $id";
-        $confereResult = connect($confereQuery);
+//     echo '</ul>';  
+// }
 
-        if ($confereResult->num_rows > 0) {
+// function estruturaCard(Personagem $personagem)
+// {
+//     echo '<div class="cards" style="margin-right: 15px; width: 23%">
+//             <h2>' . htmlspecialchars($personagem->getNome()) . '</h2>
+//             <div class="container">
+//                 <a href="' . htmlspecialchars($personagem->getImagem()) . '">
+//                     <button style="background-color: black; border: none;">
+//                         <img src="' . htmlspecialchars($personagem->getImagem()) . '" alt="Avatar" class="" style="width: 100%; height: 100%; left: 50%; position: absolute; top: 50%; object-fit: cover; transform: translate(-50%, -50%);">
+//                         <div class="overlay">
+//                             <div class="text">Conhecer <br> Personagem</div>
+//                         </div>
+//                     </button>
+//                 </a>
+//             </div>';
+//     if ($personagem->getCausaDaMorte() != null) {
+//         echo '<p class="dead">Morto</p>';
+//     } else {
+//         echo '<p class="life">Vivo</p>';
+//     }
+//     echo '  <table>
+//                 <tr valign="top">
+//                     <th class="text-start fontCard">Nome</th>
+//                     <td class="text-start fontCard">' . htmlspecialchars($personagem->getNome()) . '</td>
+//                 </tr>
+//                 <tr valign="top">
+//                     <th class="text-start fontCard">Primeira aparição</th>
+//                     <td class="text-start fontCard">' . htmlspecialchars($personagem->getPrimeiraAparicao()) . '</td>
+//                 </tr>
+//                 <tr valign="top">
+//                     <th class="text-start fontCard">Maior feito</th>
+//                     <td class="fontCard text-start">' . htmlspecialchars($personagem->getMaiorFeito()) . '</td>
+//                 </tr>
+//                 <tr valign="top">
+//                     <th class="text-start fontCard">Quem é?</th>
+//                     <td class="text-start fontCard">' . htmlspecialchars($personagem->getDescricao()) . '</td>
+//                 </tr>';
+//     if ($personagem->getCausaDaMorte() != null) {
+//         echo '<tr valign="top">
+//                 <th class="text-start fontCard">Causa da morte</th>
+//                 <td class="text-start fontCard">' . htmlspecialchars($personagem->getCausaDaMorte()) . '</td>
+//                 </tr>';
+//     }
+//     echo '      
+//                 <button class="btn btn-secondary dropdown-toggle-split mt-1" type="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-list"></i></button>
+//                 <ul class="dropdown-menu">
+//                     <li><a class="dropdown-item text-" href="#">Alterar</a></li>
+//                     <li><a class="dropdown-item text-danger" href="exclusaoPersonagem.php?id='. $personagem->getId() . '">Excluir</a></li>
+//                 </ul>
+//     </table>
+//                 </div>';
+// }
 
-            $name = queryInfo('name', $id);
-            $apparition = queryInfo('apparition', $id);
-            $greatFeat = queryInfo('greatFeat', $id);
-            $description = queryInfo('description', $id);
-            $alive = queryInfo('alive', $id);
-            $causeOfDead = queryInfo('causeOfDead', $id);
-            $image = queryInfo('image', $id);
 
-            if ($counter > 0 && $counter % 4 == 0) {
-                echo '</ul><ul>';
-            }
+// function consultaUpdate(int $id){
+//     $sqlPersonagem = "SELECT * FROM cadastroPersonagem where id = $id";
+//     // $result = Conexao::getConexao()->query($sqlPersonagem);
+//     // $lista = $result->fetchAll(PDO::FETCH_ASSOC);
 
-            estruturaCard($name, $apparition, $greatFeat, $description, $alive, $causeOfDead, $image);
-
-            $counter++;
-        }
-    }
-    echo '</ul>';
-}
-function selectMaxMin(string $maxMin)
-{
-    $maxMinIdQuery = "SELECT $maxMin(id) as $maxMin FROM db_SystemCharacters.cadastroPersonagem";
-    $maxMinIdResult = connect($maxMinIdQuery);
-    $maxMinIdRow = mysqli_fetch_assoc($maxMinIdResult);
-    $maxMinId = $maxMinIdRow[$maxMin];
-
-    return $maxMinId;
-}
-function queryInfo(string $column, int $id)
-{
-    $query = "SELECT $column FROM db_SystemCharacters.cadastroPersonagem WHERE id = $id";
-    $result = connect($query);
-    $row = $result->fetch_assoc();
-    $column = $row[$column];
-
-    return $column;
-}
-function estruturaCard($name, $apparition, $greatFeat, $description, $alive, $causeOfDead, $image)
-{
-    echo '<div class="cards" style="margin-right: 15px; width: 23%">
-            <h2>' . htmlspecialchars($name) . '</h2>
-            <div class="container">
-                <a href="' . htmlspecialchars($image) . '">
-                    <button style="background-color: black; border: none;">
-                        <img src="' . htmlspecialchars($image) . '" alt="Avatar" class="" style="width: 100%; height: 100%; left: 50%; position: absolute; top: 50%; object-fit: cover; transform: translate(-50%, -50%);">
-                        <div class="overlay">
-                            <div class="text">Conhecer <br> Personagem</div>
-                        </div>
-                    </button>
-                </a>
-            </div>';
-    if ($causeOfDead != null) {
-        echo '<p class="dead">Morto</p>';
-    } else {
-        echo '<p class="life">Vivo</p>';
-    }
-    echo '  <table>
-                <tr valign="top">
-                    <th class="text-start fontCard">Nome</th>
-                    <td class="text-start fontCard">' . htmlspecialchars($name) . '</td>
-                </tr>
-                <tr valign="top">
-                    <th class="text-start fontCard">Primeira aparição</th>
-                    <td class="text-start fontCard">' . htmlspecialchars($apparition) . '</td>
-                </tr>
-                <tr valign="top">
-                    <th class="text-start fontCard">Maior feito</th>
-                    <td class="fontCard text-start">' . htmlspecialchars($greatFeat) . '</td>
-                </tr>
-                <tr valign="top">
-                    <th class="text-start fontCard">Quem é?</th>
-                    <td class="text-start fontCard">' . htmlspecialchars($description) . '</td>
-                </tr>';
-    if ($causeOfDead != null) {
-        echo '<tr valign="top">
-                <th class="text-start fontCard">Causa da morte</th>
-                <td class="text-start fontCard">' . htmlspecialchars($causeOfDead) . '</td>
-                </tr>';
-    }
-    echo '  </table>
-                </div>';
-}
-function changeBoolForLiveOrDead($bool)
-{
-    if ($bool == 1) {
-        return 'Vivo';
-    } else {
-        return 'Morto';
-    }
-}
-?>
+//     return $sqlPersonagem;
+// } 
